@@ -34,6 +34,13 @@ RUN set -ex \
     && cd build && make install \
     && cd ~ \
     \
+    && apt-get -y purge \
+                dpkg-dev \
+                gcc \
+                libc6-dev \
+                make \
+                cmake \
+    && apt -y autoremove \
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf /build \
     && sed -r -i "s/[#]*\s*(shared_preload_libraries)\s*=\s*'(.*)'/\1 = 'timescaledb,\2'/;s/,'/'/" /usr/share/postgresql/postgresql.conf.sample
