@@ -1,7 +1,7 @@
 ARG PG_VERSION
 FROM arm32v7/postgres:${PG_VERSION}
 
-MAINTAINER Timescale https://www.timescale.com
+LABEL maintainer="tplaunonen@gmail.com"
 
 ENV TIMESCALEDB_VERSION 1.0.0-rc2
 
