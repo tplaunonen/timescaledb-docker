@@ -1,5 +1,5 @@
 ARG PG_VERSION
-FROM postgres:${PG_VERSION}-alpine
+FROM arm32v7/postgres:${PG_VERSION}
 
 MAINTAINER Timescale https://www.timescale.com
 
@@ -9,30 +9,31 @@ COPY docker-entrypoint-initdb.d/install_timescaledb.sh /docker-entrypoint-initdb
 COPY docker-entrypoint-initdb.d/reenable_auth.sh /docker-entrypoint-initdb.d/
 
 RUN set -ex \
-    && apk add --no-cache --virtual .fetch-deps \
+    && apt-get update \
+    && apt-get -y install \
                 ca-certificates \
-                openssl \
-                openssl-dev \
-                tar \
+                libssl-dev \
+                wget \
     && mkdir -p /build/timescaledb \
     && wget -O /timescaledb.tar.gz https://github.com/timescale/timescaledb/archive/$TIMESCALEDB_VERSION.tar.gz \
     && tar -C /build/timescaledb --strip-components 1 -zxf /timescaledb.tar.gz \
     && rm -f /timescaledb.tar.gz \
     \
-    && apk add --no-cache --virtual .build-deps \
-                coreutils \
-                dpkg-dev dpkg \
+    && apt-get -y install --allow-downgrades \
+                dpkg-dev \
                 gcc \
-                libc-dev \
+                libc6-dev \
                 make \
                 cmake \
-                util-linux-dev \
+                libpq5=9.6.10-0+deb9u1 \
+                postgresql-server-dev-9.6 \
+                libpq-dev \
     \
     && cd /build/timescaledb \
     && ./bootstrap -DPROJECT_INSTALL_METHOD="docker" \
     && cd build && make install \
     && cd ~ \
     \
-    && apk del .fetch-deps .build-deps \
+    && rm -rf /var/lib/apt/lists/* \
     && rm -rf /build \
-    && sed -r -i "s/[#]*\s*(shared_preload_libraries)\s*=\s*'(.*)'/\1 = 'timescaledb,\2'/;s/,'/'/" /usr/local/share/postgresql/postgresql.conf.sample
+    && sed -r -i "s/[#]*\s*(shared_preload_libraries)\s*=\s*'(.*)'/\1 = 'timescaledb,\2'/;s/,'/'/" /usr/share/postgresql/postgresql.conf.sample

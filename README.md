@@ -1,4 +1,4 @@
-<img src="http://www.timescale.com/img/timescale-wordmark-blue.svg" alt="Timescale" width="300"/>
+TimescaleDB Docker container for ARM architecture. Intended to be run on Raspberry Pi.
 
 ## What is TimescaleDB?
 
@@ -10,7 +10,7 @@ the [Timescale website](https://www.timescale.com).
 
 This image is based on the
 official
-[Postgres docker image](https://store.docker.com/images/postgres) so
+[TimescaleDB docker image](https://github.com/timescale/timescaledb-docker) so
 the documentation for that image also applies here, including the
 environment variables one can set, extensibility, etc. 
 
